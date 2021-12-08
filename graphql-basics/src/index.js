@@ -9,11 +9,22 @@ import { GraphQLServer } from "graphql-yoga";
  */
 const typeDefs = `
     type Query {
-       title: String!
-       price: Float!
-       releaseYear: Int
-       rating: Float
-       inStock: Boolean
+       me: User!
+       post: Post!
+    }
+
+    type User {
+        id: ID!
+        name: String!
+        email: String!
+        age: Int
+    }
+    
+    type Post {
+        id: ID!
+        title: String!
+        body: String!
+        published: Boolean!
     }
 `
 
@@ -25,20 +36,20 @@ const typeDefs = `
  */
 const resolvers = {
     Query: {
-        title() {
-            return 'Potato Crisps'
+        me() {
+            return {
+                id: '123098',
+                name: 'GG',
+                email: 'gg@test.com'
+            }
         },
-        price() {
-            return 230.50
-        },
-        releaseYear() {
-            return null
-        },
-        rating() {
-            return null
-        },
-        inStock() {
-            return false
+        post() {
+            return {
+                id: 'p001',
+                title: 'Potato Crisps',
+                body: 'Potato Crisps are called chips in english, but waru in kikuyu',
+                published: true
+            }
         }
     }
 }
