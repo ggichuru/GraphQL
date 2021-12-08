@@ -9,8 +9,10 @@ import { GraphQLServer } from "graphql-yoga";
  */
 const typeDefs = `
     type Query {
-       me: User!
-       post: Post!
+        greeting(name: String, title: String): String!
+        me: User!
+        post: Post!
+        add(a: Float!, b: Float!): Float!
     }
 
     type User {
@@ -33,9 +35,23 @@ const typeDefs = `
 /**
  * @RESOLVERS
  * @description Functions for each operation that can be perfomed on each api operation
+ * 
+ * @argument parent Useful while working with relational data
+ * @argument args Contains the operation argument supplied
+ * @argument ctx Context - useful for contextual data (logged in user id)
+ * @argument info Contains great info about the actual operations sent along to the server
+ * 
+ * @note When using any argument always include all arguments
  */
 const resolvers = {
     Query: {
+        greeting(parent, args, ctx, info) {
+            if (args.name && args.title) {
+                return `Hello, ${args.name}. You are my favorite ${args.title}`
+            } else {
+                return "Hello"
+            }
+        },
         me() {
             return {
                 id: '123098',
@@ -50,6 +66,9 @@ const resolvers = {
                 body: 'Potato Crisps are called chips in english, but waru in kikuyu',
                 published: true
             }
+        },
+        add(parent, args, ctx, info) {
+            return args.a + args.b
         }
     }
 }
