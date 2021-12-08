@@ -4,14 +4,16 @@ import { GraphQLServer } from "graphql-yoga";
 /**
  * @TYPE_DEFINITIONS
  * @description Application schema - defines all the operations that can be performed on the api and the custom types
- */
 
+ * @Scalar_Types String, Int, Float, Boolean, ID [rep unique identiers]
+ */
 const typeDefs = `
     type Query {
-        hello: String!
-        name: String!
-        location: String!
-        bio: String!
+       title: String!
+       price: Float!
+       releaseYear: Int
+       rating: Float
+       inStock: Boolean
     }
 `
 
@@ -23,17 +25,20 @@ const typeDefs = `
  */
 const resolvers = {
     Query: {
-        hello() {
-            return 'This is my first query'
+        title() {
+            return 'Potato Crisps'
         },
-        name() {
-            return 'GG'
+        price() {
+            return 230.50
         },
-        location() {
-            return 'Nairobi, Kenya'
+        releaseYear() {
+            return null
         },
-        bio() {
-            return 'Software Engineer'
+        rating() {
+            return null
+        },
+        inStock() {
+            return false
         }
     }
 }
