@@ -26,6 +26,7 @@ const typeDefs = `
         title: String!
         body: String!
         published: Boolean!
+        author: User!
     }
 `
 
@@ -55,19 +56,23 @@ const posts = [
         id: 'p001',
         title: 'Potato Crisps',
         body: 'Potato Crisps are called chips in english, but waru in kikuyu',
-        published: true
+        published: true,
+        author: '1'
     },
     {
         id: 'p002',
         title: 'Why programming?',
         body: 'The art whose masters are fixing this world. Find out how',
-        published: false
+        published: false,
+        author: '2'
+
     },
     {
         id: 'p003',
         title: 'Time management',
         body: 'How to manage time properly',
-        published: false
+        published: false,
+        author: '1'
     }
 ]
 
@@ -112,6 +117,13 @@ const resolvers = {
             // Filter user by name
             return users.filter((user) => {
                 return user.name.toLowerCase().includes(args.query.toLowerCase())
+            })
+        }
+    },
+    Post: {
+        author: (parent, args, ctx, info) => {
+            return users.find((user) => {
+                return user.id === parent.author
             })
         }
     }
