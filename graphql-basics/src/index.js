@@ -12,7 +12,8 @@ const typeDefs = `
         greeting(name: String, title: String): String!
         me: User!
         post: Post!
-        add(a: Float!, b: Float!): Float!
+        add(numbers: [Float!]!): Float!
+        grades: [Int!]!
     }
 
     type User {
@@ -68,7 +69,22 @@ const resolvers = {
             }
         },
         add(parent, args, ctx, info) {
-            return args.a + args.b
+            if (args.numbers.length === 0) {
+                return 0
+            }
+
+            // reduce an array of values to a single value (google MDN reduce)
+            /** [1, 5, 10, 2] */
+            return args.numbers.reduce((accumulator, currentValue) => {
+                return accumulator + currentValue
+            })
+        },
+        grades(parent, args, ctx, info) {
+            return [
+                99,
+                34,
+                90
+            ]
         }
     }
 }
