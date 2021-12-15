@@ -9,11 +9,9 @@ import { GraphQLServer } from "graphql-yoga";
  */
 const typeDefs = `
     type Query {
-        greeting(name: String, title: String): String!
         me: User!
-        post: Post!
-        add(numbers: [Float!]!): Float!
-        grades: [Int!]!
+        posts(query: String): [Post!]!
+        users(query: String): [User!]!
     }
 
     type User {
@@ -33,6 +31,47 @@ const typeDefs = `
 
 
 
+// Demo user data
+const users = [{
+    id: '1',
+    name: 'GGichuru',
+    email: 'ggichuru@eg.com',
+    age: 23
+}, {
+    id: '2',
+    name: 'Tesse',
+    email: 'tesse@eg.com'
+}, {
+    id: '3',
+    name: 'Lynn',
+    email: 'lynn@eg.com',
+    age: 14
+}]
+
+
+// Demo Post data
+const posts = [
+    {
+        id: 'p001',
+        title: 'Potato Crisps',
+        body: 'Potato Crisps are called chips in english, but waru in kikuyu',
+        published: true
+    },
+    {
+        id: 'p002',
+        title: 'Why programming?',
+        body: 'The art whose masters are fixing this world. Find out how',
+        published: false
+    },
+    {
+        id: 'p003',
+        title: 'Time management',
+        body: 'How to manage time properly',
+        published: false
+    }
+]
+
+
 /**
  * @RESOLVERS
  * @description Functions for each operation that can be perfomed on each api operation
@@ -46,13 +85,6 @@ const typeDefs = `
  */
 const resolvers = {
     Query: {
-        greeting(parent, args, ctx, info) {
-            if (args.name && args.title) {
-                return `Hello, ${args.name}. You are my favorite ${args.title}`
-            } else {
-                return "Hello"
-            }
-        },
         me() {
             return {
                 id: '123098',
@@ -60,31 +92,27 @@ const resolvers = {
                 email: 'gg@test.com'
             }
         },
-        post() {
-            return {
-                id: 'p001',
-                title: 'Potato Crisps',
-                body: 'Potato Crisps are called chips in english, but waru in kikuyu',
-                published: true
-            }
-        },
-        add(parent, args, ctx, info) {
-            if (args.numbers.length === 0) {
-                return 0
+        posts: (parent, args, ctx, info) => {
+            if (!args.query) {
+                return posts
             }
 
-            // reduce an array of values to a single value (google MDN reduce)
-            /** [1, 5, 10, 2] */
-            return args.numbers.reduce((accumulator, currentValue) => {
-                return accumulator + currentValue
+            // filter posts by title and body
+            return posts.filter((post) => {
+                const isTitleMatch = post.title.toLowerCase().includes(args.query.toLowerCase())
+                const isBodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase())
+                return isTitleMatch || isBodyMatch
             })
         },
-        grades(parent, args, ctx, info) {
-            return [
-                99,
-                34,
-                90
-            ]
+        users: (parent, args, ctx, info) => {
+            if (!args.query) {
+                return users
+            }
+
+            // Filter user by name
+            return users.filter((user) => {
+                return user.name.toLowerCase().includes(args.query.toLowerCase())
+            })
         }
     }
 }
