@@ -12,6 +12,7 @@ const typeDefs = `
         me: User!
         posts(query: String): [Post!]!
         users(query: String): [User!]!
+        comments: [Comment!]!
     }
 
     type User {
@@ -28,6 +29,10 @@ const typeDefs = `
         body: String!
         published: Boolean!
         author: User!
+    }
+    type Comment {
+        id: ID!
+        comment: String!
     }
 `
 
@@ -77,6 +82,27 @@ const posts = [
     }
 ]
 
+// Demo comments data
+const comments = [
+    {
+        id: 'c001',
+        comment: 'This is wonderful'
+    },
+    {
+        id: 'c002',
+        comment: 'God is good'
+    },
+    {
+        id: 'c003',
+        comment: 'All the time God is marvelous'
+    },
+    {
+        id: 'c004',
+        comment: 'I am saved because He lives'
+    },
+]
+
+
 
 /**
  * @RESOLVERS
@@ -119,6 +145,9 @@ const resolvers = {
             return users.filter((user) => {
                 return user.name.toLowerCase().includes(args.query.toLowerCase())
             })
+        },
+        comments: (parent, args, ctx, info) => {
+            return comments
         }
     },
     Post: {
