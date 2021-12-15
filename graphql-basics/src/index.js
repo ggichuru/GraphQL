@@ -18,6 +18,7 @@ const typeDefs = `
 
     type Mutation {
         createUser(data: CreateUserInput): User!
+        deleteUser(id: ID!): User!
         createPost(data: CreatePostInput): Post!
         createComment(data: CreateCommentInput): Comment!
     }
@@ -69,7 +70,7 @@ const typeDefs = `
 
 
 // Demo user data
-const users = [{
+let users = [{
     id: '1',
     name: 'GGichuru',
     email: 'ggichuru@eg.com',
@@ -87,7 +88,7 @@ const users = [{
 
 
 // Demo Post data
-const posts = [
+let posts = [
     {
         id: 'p001',
         title: 'Potato Crisps',
@@ -107,7 +108,7 @@ const posts = [
         id: 'p003',
         title: 'Time management',
         body: 'How to manage time properly',
-        published: false,
+        published: true,
         author: '1'
     },
     {
@@ -120,7 +121,7 @@ const posts = [
 ]
 
 // Demo comments data
-const comments = [
+let comments = [
     {
         id: 'c001',
         comment: 'This is wonderful',
@@ -211,6 +212,29 @@ const resolvers = {
 
             return user
         },
+        deleteUser: (parent, args, ctx, info) => {
+            const userIndex = users.findIndex((user) => user.id === args.id)
+
+            if (userIndex === -1) {
+                throw new Error('User not found')
+            }
+
+            const deletedUsers = users.splice(userIndex, 1)
+
+            posts = posts.filter((post) => {
+                const match = post.author === args.id
+
+                if (match) {
+                    comments = comments.filter((comment) => comment.post !== post.id)
+                }
+
+                return !match
+            })
+
+            comments = comments.filter((comment) => comment.author !== args.id)
+
+            return deletedUsers[0]
+        },
         createPost: (parent, args, ctx, info) => {
             const userExists = users.some((user) => user.id === args.data.author)
 
@@ -234,7 +258,7 @@ const resolvers = {
                 throw new Error('User not found')
             }
 
-            const isPublishedPost = posts.some((post) => post.id === args.data.post && post.published === true)
+            const isPublishedPost = posts.some((post) => post.id === args.data.post && post.published)
 
             if (!isPublishedPost) {
                 throw new Error('Either posts does not exist or is not published')
