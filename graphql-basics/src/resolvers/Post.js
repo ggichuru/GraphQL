@@ -11,4 +11,4 @@ const Post = {
     }
 }
 
-export { Post as Default }
+export { Post as default }
