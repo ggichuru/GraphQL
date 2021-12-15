@@ -1,5 +1,6 @@
 /**@ggichuru */
 import { GraphQLServer } from "graphql-yoga";
+import uuidv4 from "uuid/v4"
 
 /**
  * @TYPE_DEFINITIONS
@@ -13,6 +14,10 @@ const typeDefs = `
         posts(query: String): [Post!]!
         users(query: String): [User!]!
         comments: [Comment!]!
+    }
+
+    type Mutation {
+        createUser(name: String!, email: String!, age: Int): User!
     }
 
     type User {
@@ -167,6 +172,25 @@ const resolvers = {
         },
         comments: (parent, args, ctx, info) => {
             return comments
+        }
+    },
+    Mutation: {
+        createUser: (parent, args, ctx, info) => {
+            const emailTaken = users.some((user) => user.email == args.email)
+
+            if (emailTaken) {
+                throw new Error('Email already taken')
+            }
+
+            const user = {
+                id: uuidv4(),
+                name: args.name,
+                email: args.email,
+                age: args.age
+            }
+            users.push(user)
+
+            return user
         }
     },
     Post: {
